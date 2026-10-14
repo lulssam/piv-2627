@@ -10,9 +10,6 @@ img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-
-
-
 # split do hsv
 h, s, v = cv2.split(img_hsv)
 
@@ -51,13 +48,28 @@ aberta = cv2.morphologyEx(mascara_peca, cv2.MORPH_OPEN, kernel=kernel)
 limpa = cv2.morphologyEx(aberta, cv2.MORPH_CLOSE, kernel=kernel)
 
 # edge detection
-edges = cv2.Canny(limpa, 30, 200)
-contours, hierarchy = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+contornos_img = img_rgb.copy()
+contours, hierarchy = cv2.findContours(limpa, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+cv2.drawContours(contornos_img, contours, -1 ,(0,255,0), 3)
+
 print("Number of Contours Found = " + str(len(contours)))
 
 
-imagens = [img_rgb, img_gray, mascara_mesa, mascara_peca, aberta, limpa, edges]
-titulos = ["Original", "Escala de Cinzentos", "Mascara Mesa", "Mascara Peca", "Aberta", "Limpa", "Edge Detection"]
+# calcular extent
+for c in contours:
+    area_contorno = cv2.contourArea(c)
+    (centro, (largura, altura), _) = cv2.minAreaRect(c) # devolve (centro, (largura, altura), angulo)
+    area_retangulo = largura * altura
+    if area_retangulo == 0:
+        continue
+    extent = area_contorno / area_retangulo
+    x, y = int(centro[0]), int(centro[1])
+    cv2.putText(contornos_img, f"{extent:.2f}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
+
+
+
+imagens = [img_rgb, img_gray, mascara_mesa, mascara_peca, aberta, limpa, contornos_img]
+titulos = ["Original", "Escala de Cinzentos", "Mascara Mesa", "Mascara Peca", "Aberta", "Limpa", "Contornos da Imagem"]
 fig, axs = plt.subplots(2, 4, figsize=(14, 9))
 
 for ax, imagem, titulo in zip(axs.flat, imagens, titulos):
