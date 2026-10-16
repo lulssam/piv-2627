@@ -63,6 +63,10 @@ for c in contours:
     if area_retangulo == 0:
         continue
     extent = area_contorno / area_retangulo
+    
+    epsilon = 0.02 * cv2.arcLength(c, True)
+    approx = cv2.approxPolyDP(c, epsilon, True)
+    
     x, y = int(centro[0]), int(centro[1])
     cv2.putText(contornos_img, f"{extent:.2f}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
 
