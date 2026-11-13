@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from aux_func.bwLabel import labeling
 from aux_func.psColor import CreateColorMap, Gray2PseudoColor
 
-caminho = "./imgs/lily-lotus-flowers.jpg"
+caminho = "./imgs/formas.png"
 img = cv2.imread(caminho)
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
